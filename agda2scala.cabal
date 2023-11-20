@@ -26,7 +26,7 @@ version:            0.1.0.0
 synopsis:           Agda backend for Scala
 
 -- A longer description of the package.
--- description:
+description:         Allows to export Scala source files from formal specification in Agda
 
 -- The license under which the package is released.
 license:            MIT
@@ -59,7 +59,8 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  MyLib
+    exposed-modules:
+      ScalaBackend
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -69,6 +70,7 @@ library
 
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.19.0.0
+                      , Agda <= 2.6.4
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -121,9 +123,11 @@ test-suite agda2scala-test
     hs-source-dirs:   test
 
     -- The entrypoint to the test suite.
-    main-is:          Main.hs
+    main-is:          ScalaBackendTest.hs
 
     -- Test dependencies.
     build-depends:
         base ^>=4.19.0.0
+        , Agda <= 2.6.4
+        , HUnit >= 1.6.2.0
         , agda2scala
