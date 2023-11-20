@@ -9,8 +9,13 @@ main = runAgda [backend]
 backend :: Backend
 backend = Backend scalaBackend
 
--- Backend' opts env menv0 mod0 def0
-scalaBackend :: Backend' () () () () ()
+type ScalaFlags = ()
+type ScalaEnv = ()
+type ScalaModuleEnv = ()
+type ScalaModule = ()
+type ScalaDefinition = ()
+
+scalaBackend :: Backend' ScalaFlags ScalaEnv ScalaModuleEnv ScalaModule ScalaDefinition
 scalaBackend = Backend'
   { backendName           = "agda2scala"
   , backendVersion        = Nothing
