@@ -1,4 +1,4 @@
-module Hello where
+module test.Hello where
 
 data Bool : Set where
   true : Bool

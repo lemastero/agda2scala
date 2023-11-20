@@ -18,4 +18,4 @@ jobs:
         run: cabal test all
       
       - name: Run tests
-        run: cabal run agda2scala
+        run: cabal run -- agda2scala ./test/Hello.agda
