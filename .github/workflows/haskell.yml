@@ -10,4 +10,9 @@ jobs:
         with:
           ghc-version: '9.6'
           cabal-version: '3.0'
-      - run: runhaskell Hello.hs
+
+      - name: Build
+        run: cabal build all
+
+      - name: Run tests
+        run: cabal test all
