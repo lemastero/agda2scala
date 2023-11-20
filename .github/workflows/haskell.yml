@@ -2,10 +2,10 @@ on: [push]
 name: build
 jobs:
   runhaskell:
-    name: Hello World
+    name: agda2scala
     runs-on: ubuntu-latest # or macOS-latest, or windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: haskell-actions/setup@v2
         with:
           ghc-version: '9.6'
@@ -16,3 +16,6 @@ jobs:
 
       - name: Run tests
         run: cabal test all
+      
+      - name: Run tests
+        run: cabal run agda2scala

@@ -11,7 +11,7 @@ cabal update
 * Build
 
 ```sh
-cabal build
+cabal build all
 ```
 
 * Run
@@ -23,5 +23,5 @@ cabal run agda2scala
 * Run tests
 
 ```sh
-cabal test
+cabal test all
 ```
