@@ -23,7 +23,7 @@ name:               agda2scala
 version:            0.1.0.0
 
 -- A short (one-line) description of the package.
--- synopsis:
+synopsis:           Agda backend for Scala
 
 -- A longer description of the package.
 -- description:
@@ -91,8 +91,8 @@ executable agda2scala
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.18.0.0,
-        agda2scala
+        base ^>=4.18.0.0
+        , Agda <= 2.6.4
 
     -- Directories containing source files.
     hs-source-dirs:   app
@@ -124,5 +124,5 @@ test-suite agda2scala-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.18.0.0,
-        agda2scala
+        base ^>=4.18.0.0
+        , agda2scala
