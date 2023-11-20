@@ -17,6 +17,7 @@ cabal build all
 * Run
 
 ```sh
+cabal run -- agda2scala --help
 cabal run -- agda2scala ./test/Hello.agda
 ```
 
