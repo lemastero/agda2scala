@@ -92,6 +92,7 @@ executable agda2scala
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.18.0.0
+        , agda2scala
         , Agda <= 2.6.4
 
     -- Directories containing source files.
