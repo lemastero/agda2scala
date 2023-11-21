@@ -1,6 +1,6 @@
 module Main where
 
-import ScalaBackend ( runScalaBackend )
+import Agda.Compiler.Scala.Backend ( runScalaBackend )
 
 main :: IO ()
 main = runScalaBackend
