@@ -1,17 +1,17 @@
-module ScalaBackend (
-  backend
-  , runScalaBackend
+module Agda.Compiler.Scala.Backend (
+  runScalaBackend
   , scalaBackend
+  , scalaBackend'
   ) where
 
 import Agda.Main ( runAgda )
 import Agda.Compiler.Backend
 
 runScalaBackend :: IO ()
-runScalaBackend = runAgda [backend]
+runScalaBackend = runAgda [scalaBackend]
 
-backend :: Backend
-backend = Backend scalaBackend
+scalaBackend :: Backend
+scalaBackend = Backend scalaBackend'
 
 type ScalaFlags = ()
 type ScalaEnv = ()
@@ -19,8 +19,8 @@ type ScalaModuleEnv = ()
 type ScalaModule = ()
 type ScalaDefinition = ()
 
-scalaBackend :: Backend' ScalaFlags ScalaEnv ScalaModuleEnv ScalaModule ScalaDefinition
-scalaBackend = Backend'
+scalaBackend' :: Backend' ScalaFlags ScalaEnv ScalaModuleEnv ScalaModule ScalaDefinition
+scalaBackend' = Backend'
   { backendName           = "Scala"
   , backendVersion        = Just "0.1"
   , options               = ()
