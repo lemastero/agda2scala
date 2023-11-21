@@ -3,7 +3,7 @@ name: build
 jobs:
   runhaskell:
     name: agda2scala
-    runs-on: ubuntu-latest # or macOS-latest, or windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: haskell-actions/setup@v2
