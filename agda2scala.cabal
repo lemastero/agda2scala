@@ -69,8 +69,10 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.19.0.0
-                      , Agda <= 2.6.4
+    build-depends:
+        base >=4.10 && < 4.20
+        , containers > 0.6 && < 0.7
+        , Agda >= 2.6.4 && < 2.6.5
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -93,9 +95,9 @@ executable agda2scala
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.19.0.0
+        base >=4.10 && < 4.20
+        , Agda >= 2.6.4 && < 2.6.5
         , agda2scala
-        , Agda <= 2.6.4
 
     -- Directories containing source files.
     hs-source-dirs:   app
@@ -127,7 +129,7 @@ test-suite agda2scala-test
 
     -- Test dependencies.
     build-depends:
-        base ^>=4.19.0.0
-        , Agda <= 2.6.4
+        base >=4.10 && < 4.20
+        , Agda >= 2.6.4 && < 2.6.5
         , HUnit >= 1.6.2.0
         , agda2scala
