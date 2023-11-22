@@ -13,8 +13,7 @@ import Agda.Compiler.Backend (
   , Flag
   , IsMain
   , Recompile(..)
-  , TCM
-  )
+  , TCM )
 import Agda.Interaction.Options ( OptDescr )
 import Agda.Syntax.TopLevelModuleName ( TopLevelModuleName )
 
@@ -65,26 +64,37 @@ compilation:
 scalaBackend' :: Backend' ScalaFlags ScalaEnv ScalaModuleEnv ScalaModule ScalaDefinition
 scalaBackend' = Backend'
   { backendName           = "agda2scala"
-  , backendVersion        = Just "0.1"
-  , options               = ()
+  , backendVersion        = scalaBackendVersion
+  , options               = defaultOptions
   , commandLineFlags      = scalaCmdLineFlags
   , isEnabled             = const True
-  , preCompile            = \ opt -> return opt
+  , preCompile            = scalaPreCompile
   , compileDef            = scalaCompileDef
   , postCompile           = scalaPostCompile
-  , preModule             = \ _ _ _ _ -> return $ Recompile ()
+  , preModule             = scalaPreModule
   , postModule            = scalaPostModule
   , scopeCheckingSuffices = False
   , mayEraseType          = const $ return True
   }
 
--- TODO perhaps add option to choose if we want to produce Functor, Monad etc from zio-prelude or cats
--- TODO perhaps add option to use annotations from ProovingGrounds library
+-- TODO get version from cabal definition, perhaps git hash too
+scalaBackendVersion :: Maybe String
+scalaBackendVersion = Just "0.1"
+
+defaultOptions :: ScalaFlags
+defaultOptions = ()
+
+-- TODO add option to choose Scala version (Scala 2.12 vs dotty vs Scala 4)
+-- TODO perhaps add option to choose if we want to produce Functor, Monad etc from zio/zio-prelude or typelevel/cats-effect
+-- TODO perhaps add option to use annotations from siddhartha-gadgil/ProvingGround library
 scalaCmdLineFlags :: [OptDescr (Flag ScalaFlags)]
 scalaCmdLineFlags = []
 
+scalaPreCompile :: ScalaFlags -> TCM ScalaEnv
+scalaPreCompile opt = return opt
+
 -- TODO perhaps transform definitions here, ATM just pass it with extra information is it main
--- Rust backend perform transofrmation to Higher IR
+-- Rust backend perform transformation to Higher IR
 -- Scheme pass as is (like here)
 scalaCompileDef :: ScalaEnv
   -> ScalaModuleEnv
@@ -99,6 +109,14 @@ scalaPostCompile :: ScalaEnv
   -> TCM ()
 scalaPostCompile _ _ _ = return ()
 
+scalaPreModule :: ScalaEnv
+  -> IsMain
+  -> TopLevelModuleName
+  -> Maybe FilePath
+  -> TCM (Recompile ScalaModuleEnv ScalaModule)
+scalaPreModule _ _ _ _ = return $ Recompile ()
+
+-- TODO implement translation here
 scalaPostModule :: ScalaEnv
   -> ScalaModuleEnv
   -> IsMain
