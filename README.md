@@ -4,10 +4,10 @@
 
 ## Working with source code
 
-* Update cabal libraries definitions
+* Starting continuous compilation loop
 
 ```sh
-cabal update
+ghcid
 ```
 
 * Build
