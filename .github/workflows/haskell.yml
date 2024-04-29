@@ -49,7 +49,7 @@ jobs:
       - name: Build
         run: cabal build all
 
-      - name: Run tests
+      - name: Run testsľ
         run: cabal test all
       
       - name: Run tests
