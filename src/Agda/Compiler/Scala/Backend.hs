@@ -4,7 +4,10 @@ module Agda.Compiler.Scala.Backend (
   , scalaBackend'
   ) where
 
+import Control.DeepSeq ( NFData(..) )
 import Data.Map ( Map )
+import qualified Data.Text.IO as T
+
 import Agda.Main ( runAgda )
 import Agda.Compiler.Backend (
   Backend(..)
@@ -23,8 +26,13 @@ runScalaBackend = runAgda [scalaBackend]
 scalaBackend :: Backend
 scalaBackend = Backend scalaBackend'
 
-type ScalaFlags = ()
-type ScalaEnv = ()
+data Options = Options { optOutDir :: Maybe FilePath }
+
+instance NFData Options where
+  rnf _ = ()
+
+type ScalaFlags = Options
+type ScalaEnv = Options
 type ScalaModuleEnv = ()
 type ScalaModule = ()
 type ScalaDefinition = (IsMain, Definition)
@@ -82,7 +90,7 @@ scalaBackendVersion :: Maybe String
 scalaBackendVersion = Just "0.1"
 
 defaultOptions :: ScalaFlags
-defaultOptions = ()
+defaultOptions = Options{ optOutDir = Nothing }
 
 -- TODO add option to choose Scala version (Scala 2.12 vs dotty vs Scala 4)
 -- TODO perhaps add option to choose if we want to produce Functor, Monad etc from zio/zio-prelude or typelevel/cats-effect
@@ -91,7 +99,7 @@ scalaCmdLineFlags :: [OptDescr (Flag ScalaFlags)]
 scalaCmdLineFlags = []
 
 scalaPreCompile :: ScalaFlags -> TCM ScalaEnv
-scalaPreCompile opt = return opt
+scalaPreCompile = return
 
 -- TODO perhaps transform definitions here, ATM just pass it with extra information is it main
 -- Rust backend perform transformation to Higher IR
@@ -123,5 +131,5 @@ scalaPostModule :: ScalaEnv
   -> TopLevelModuleName
   -> [ScalaDefinition]
   -> TCM ScalaModule
-scalaPostModule _ _ _ _ _ = return ()
+scalaPostModule env modEnv isMain modName defs = return ()
 
