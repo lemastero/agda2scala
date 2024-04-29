@@ -1,4 +1,4 @@
-module test.hello where
+module test.adts where
 
 -- simple sum type no arguments - sealed trait + case objects
 data Rgb : Set where
