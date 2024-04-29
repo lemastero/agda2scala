@@ -1,13 +1,15 @@
-{-# OPTIONS --cubical-compatible #-}
+module test.hello where
 
-module test.Hello where
+-- simple sum type no arguments - sealed trait + case objects
+data Rgb : Set where
+  Red : Rgb
+  Green : Rgb
+  Blue : Rgb
+{-# COMPILE AGDA2SCALA Rgb #-}
 
--- Type with two inhabitants
-data Bool : Set where
-  false true : Bool
-{-# COMPILE AGDA2SCALA Bool #-}
+-- TODO simple sum type with arguments
 
-{- Logical connective not - negation -}
-not : Bool -> Bool
-not true  = false
-not false = true
+data Color : Set where
+  Light : Rgb -> Color
+  Dark : Rgb -> Color
+{-# COMPILE AGDA2SCALA Color #-}
