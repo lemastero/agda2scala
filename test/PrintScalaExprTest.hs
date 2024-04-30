@@ -23,11 +23,11 @@ testPrintSealedTrait = TestCase
     "sealed trait Color"
     (printSealedTrait "Color"))
 
-testPrintPackage :: Test
-testPrintPackage = TestCase
-  (assertEqual "printPackage"
-    "package adts"
-    (printPackage "adts"))
+--testPrintPackage :: Test
+--testPrintPackage = TestCase
+--  (assertEqual "printPackage"
+--    "package adts"
+--    (printPackage "adts"))
 
 testCombineLines :: Test
 testCombineLines = TestCase
@@ -38,7 +38,7 @@ testCombineLines = TestCase
 testPrintScalaExpr :: Test
 testPrintScalaExpr = TestCase
   (assertEqual "printScalaExpr" (printScalaExpr $ SePackage "adts" moduleContent)
-  "package adts\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n"
+  "object adts {\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n}\n"
   )
   where
     moduleContent = [rgbAdt, blank, blank, blank, colorAdt, blank, blank]
@@ -57,7 +57,7 @@ printScalaTests :: Test
 printScalaTests = TestList [
   TestLabel "printCaseObject" testPrintCaseObject
   , TestLabel "printSealedTrait" testPrintSealedTrait
-  , TestLabel "printPackage" testPrintPackage
+--  , TestLabel "printPackage" testPrintPackage
   , TestLabel "combineLines" testCombineLines
   , TestLabel "printCaseClass" testPrintCaseClass
   , TestLabel "printScalaExpr" testPrintScalaExpr

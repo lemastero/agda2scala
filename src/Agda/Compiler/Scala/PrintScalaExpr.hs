@@ -12,8 +12,8 @@ import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 printScalaExpr :: ScalaExpr -> String
 printScalaExpr def = case def of
   (SePackage pName defs) ->
-    (printPackage pName) <> defsSeparator
-    <> (
+    (printPackage pName) <> exprSeparator -- TODO this should be package + object
+      <> bracket (
       blankLine -- between package declaration and first definition
       <> combineLines (map printScalaExpr defs)
       )
@@ -54,7 +54,7 @@ printCaseObject superName caseName =
   "case object" <> exprSeparator <> caseName <> exprSeparator <> "extends" <> exprSeparator <> superName
 
 printPackage :: ScalaName -> String
-printPackage pName = "package" <> exprSeparator <> pName
+printPackage pName = "object" <> exprSeparator <> pName
 
 bracket :: String -> String
 bracket str = "{\n" <> str <> "\n}"
