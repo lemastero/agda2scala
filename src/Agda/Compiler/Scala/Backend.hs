@@ -45,6 +45,8 @@ import Agda.TypeChecking.Monad.Base ( Definition(..) )
 import Agda.TypeChecking.Monad
 import Agda.TypeChecking.CompiledClause ( CompiledClauses(..), CompiledClauses'(..) )
 
+import Agda.Compiler.Scala.Expr ( ScalaName, ScalaExpr(..), unHandled )
+
 runScalaBackend :: IO ()
 runScalaBackend = runAgda [scalaBackend]
 
@@ -62,18 +64,6 @@ type ScalaModuleEnv = ()
 type ScalaModule = ()
 type ScalaDefinition = ScalaExpr
 
-type ScalaName = String
-
-data ScalaExpr
-  = SePackage ScalaName [ScalaExpr]
-  | SeAdt ScalaName [ScalaName]
-  | Unhandled ScalaName String
-  deriving ( Show )
-
-unHandled :: ScalaExpr -> Bool
-unHandled (Unhandled _ _) = True
-unHandled _               = False
-
 {- Backend contains implementations of hooks called around compilation of Agda code -}
 scalaBackend' :: Backend' ScalaFlags ScalaEnv ScalaModuleEnv ScalaModule ScalaDefinition
 scalaBackend' = Backend'
@@ -82,7 +72,7 @@ scalaBackend' = Backend'
   , options               = defaultOptions
   , commandLineFlags      = scalaCmdLineFlags
   , isEnabled             = const True
-  , preCompile            = scalaPreCompile
+  , preCompile            = return
   , compileDef            = scalaCompileDef
   , postCompile           = scalaPostCompile
   , preModule             = scalaPreModule
@@ -91,7 +81,6 @@ scalaBackend' = Backend'
   , mayEraseType          = const $ return True
   }
 
--- TODO get version from cabal definition, perhaps git hash too
 scalaBackendVersion :: Maybe String
 scalaBackendVersion = Just (showVersion version)
 
@@ -103,19 +92,13 @@ defaultOptions = Options{ optOutDir = Nothing }
 -- TODO perhaps add option to use annotations from siddhartha-gadgil/ProvingGround library
 scalaCmdLineFlags :: [OptDescr (Flag ScalaFlags)]
 scalaCmdLineFlags = [
-  Option ['o'] ["out-dir"] (ReqArg outdirOpt "DIR")
+  Option ['o'] ["out-dir"] (ReqArg outDirOpt "DIR")
          "Write output files to DIR. (default: project root)"
   ]
 
-outdirOpt :: Monad m => FilePath -> Options -> m Options
-outdirOpt dir opts = return opts{ optOutDir = Just dir }
+outDirOpt :: Monad m => FilePath -> Options -> m Options
+outDirOpt dir opts = return opts{ optOutDir = Just dir }
 
-scalaPreCompile :: ScalaFlags -> TCM ScalaEnv
-scalaPreCompile = return
-
--- TODO perhaps transform definitions here, ATM just pass it with extra information is it main
--- Rust backend perform transformation to Higher IR
--- Scheme pass as is (like here)
 scalaCompileDef :: ScalaEnv
   -> ScalaModuleEnv
   -> IsMain
@@ -161,7 +144,6 @@ scalaPreModule _ _ _ _ = do
   setScope . iInsideScope =<< curIF
   return $ Recompile ()
 
--- TODO implement translation here
 scalaPostModule :: ScalaEnv
   -> ScalaModuleEnv
   -> IsMain
@@ -194,13 +176,16 @@ compileLog msg = liftIO $ putStrLn msg
 
 prettyPrintScalaExpr :: ScalaDefinition -> String
 prettyPrintScalaExpr def = case def of
-  (SePackage mName defs) ->
-    moduleHeader mName
+  (SePackage pName defs) ->
+    moduleHeader pName
     <> defsSeparator <> (
       defsSeparator -- empty line before first definition in package
       <> combineLines (map prettyPrintScalaExpr defs))
     <> defsSeparator
-  (SeAdt adtName adtCases) -> "sealed trait" <> exprSeparator <> adtName <> defsSeparator <> unlines (map (prettyPrintCaseObject adtName) adtCases)
+  (SeAdt adtName adtCases) ->
+    "sealed trait" <> exprSeparator <> adtName
+    <> defsSeparator
+    <> unlines (map (prettyPrintCaseObject adtName) adtCases)
   -- TODO not sure why I get this
   -- (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
   (Unhandled name payload) -> ""
@@ -209,10 +194,11 @@ prettyPrintScalaExpr def = case def of
 
 
 prettyPrintCaseObject :: ScalaName -> ScalaName -> String
-prettyPrintCaseObject superName xs = "case object" <> exprSeparator <> xs <> exprSeparator <> "extends" <> exprSeparator <> superName
+prettyPrintCaseObject superName xs =
+  "case object" <> exprSeparator <> xs <> exprSeparator <> "extends" <> exprSeparator <> superName
 
 moduleHeader :: String -> String
-moduleHeader mName = "package" <> exprSeparator <> mName <> exprSeparator
+moduleHeader pName = "package" <> exprSeparator <> pName <> exprSeparator
 
 bracket :: String -> String
 bracket str = "{\n" <> str <> "\n}"

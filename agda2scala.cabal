@@ -6,7 +6,7 @@ name:               agda2scala
 -- PVP summary:     +-+------- breaking API changes
 --                  | | +----- non-breaking API additions
 --                  | | | +--- code changes with no API change
-version:            0.1.0.1
+version:            0.1.0.2
 description:        Allows to export Scala source files from formal specification in Agda
 license:            MIT
 license-file:       LICENSE
@@ -28,6 +28,7 @@ common warnings
 library
   hs-source-dirs:      src
   exposed-modules:     Agda.Compiler.Scala.Backend
+                       Agda.Compiler.Scala.Expr
                        Paths_agda2scala
   autogen-modules:     Paths_agda2scala
   build-depends:       base >= 4.10 && < 4.20,
