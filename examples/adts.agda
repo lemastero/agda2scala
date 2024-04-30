@@ -7,9 +7,13 @@ data Rgb : Set where
   Blue : Rgb
 {-# COMPILE AGDA2SCALA Rgb #-}
 
--- simple sum type with arguments - sealed trait + case class
+data Bool : Set where
+   True : Bool
+   False : Bool
+{-# COMPILE AGDA2SCALA Bool #-}
 
-data Color : Set where
-  Light : Rgb -> Color
-  Dark : Rgb -> Color
-{-# COMPILE AGDA2SCALA Color #-}
+-- trivial function with single argument
+
+idRgb : Rgb -> Rgb
+idRgb x = x
+{-# COMPILE AGDA2SCALA idRgb #-}

@@ -7,7 +7,7 @@ module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
   , combineLines
   ) where
 
-import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..) )
+import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeElem(..), SeArgument )
 
 printScalaExpr :: ScalaExpr -> String
 printScalaExpr def = case def of
@@ -21,10 +21,20 @@ printScalaExpr def = case def of
   (SeAdt adtName adtCases) ->
     (printSealedTrait adtName)
     <> defsSeparator
-    <> unlines (map (printCaseObject adtName) adtCases)
-  (Unhandled name payload) -> "" -- for development comment out this and uncomment below
-  -- (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
-  -- other -> "unsupported printScalaExpr " ++ (show other)
+    <> combineLines (map (printCaseObject adtName) adtCases)
+    <> defsSeparator
+  (SeFun fName args resType funBody) ->
+    "def" <> exprSeparator <> fName
+    <> "(" <> combineLines (map printFunArg args) <> ")"
+    <> ":" <> exprSeparator <> resType <> exprSeparator
+    <> "=" <> exprSeparator <> funBody
+    <> defsSeparator
+  (Unhandled "" payload) -> ""
+  (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
+  other -> "unsupported printScalaExpr " ++ (show other)
+
+printFunArg :: SeArgument -> String
+printFunArg (SeElem sName sType) = sName <> ":" <> exprSeparator <> sType
 
 printSealedTrait :: ScalaName -> String
 printSealedTrait adtName = "sealed trait" <> exprSeparator <> adtName
