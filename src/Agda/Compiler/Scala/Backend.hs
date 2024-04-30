@@ -131,6 +131,8 @@ scalaPostModule :: ScalaEnv
 scalaPostModule env modEnv isMain mName cdefs = do
   outDir <- compileDir
   compileLog $ "compiling " <> mkOutFile outDir
+  compileLog $ "scalaExprs " <> (show scalaExprs)
+  compileLog $ "fileContent " <> fileContent
   unless (all unHandled cdefs)
     $ liftIO
     $ writeFile (mkOutFile outDir) fileContent

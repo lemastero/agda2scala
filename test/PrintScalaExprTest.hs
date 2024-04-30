@@ -7,8 +7,9 @@ import Agda.Compiler.Scala.PrintScalaExpr (
   , printCaseObject
   , printPackage
   , combineLines
+  , printCaseClass
   )
-import Agda.Compiler.Scala.ScalaExpr ( ScalaExpr(..) )
+import Agda.Compiler.Scala.ScalaExpr ( ScalaExpr(..), SeVar(..) )
 
 testPrintCaseObject :: Test
 testPrintCaseObject = TestCase
@@ -41,9 +42,16 @@ testPrintScalaExpr = TestCase
   )
   where
     moduleContent = [rgbAdt, blank, blank, blank, colorAdt, blank, blank]
-    rgbAdt = SeAdt "Rgb" ["Red","Green","Blue"]
-    colorAdt = SeAdt "Color" ["Light","Dark"]
+    rgbAdt = SeSum "Rgb" ["Red","Green","Blue"]
+    colorAdt = SeSum "Color" ["Light","Dark"]
     blank = Unhandled "" ""
+
+testPrintCaseClass :: Test
+testPrintCaseClass = TestCase
+  (assertEqual "printCaseClass"
+    "final case class RgbPair(snd: Bool, fst: Rgb)"
+    (printCaseClass "RgbPair" [SeVar "snd" "Bool", SeVar "fst" "Rgb"]))
+    
 
 printScalaTests :: Test
 printScalaTests = TestList [
@@ -51,5 +59,6 @@ printScalaTests = TestList [
   , TestLabel "printSealedTrait" testPrintSealedTrait
   , TestLabel "printPackage" testPrintPackage
   , TestLabel "combineLines" testCombineLines
+  , TestLabel "printCaseClass" testPrintCaseClass
   , TestLabel "printScalaExpr" testPrintScalaExpr
   ]

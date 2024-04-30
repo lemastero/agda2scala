@@ -10,3 +10,5 @@ case object True extends Bool
 case object False extends Bool
 
 def idRgb(x: Rgb): Rgb = x
+
+final case class RgbPair(snd: Bool, fst: Rgb)

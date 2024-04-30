@@ -1,27 +1,25 @@
 module Agda.Compiler.Scala.ScalaExpr (
  ScalaName,
  ScalaType,
- SeArgument,
  ScalaExpr(..),
- SeElem(..),
+ SeVar(..),
  FunBody,
  unHandled
  ) where
 
 type ScalaName = String
-type FunBody = String     -- this should be some lambda expression
+type FunBody   = String     -- this should be some lambda expression
 type ScalaType = String
 
-data SeElem = SeElem ScalaName ScalaType
+data SeVar = SeVar ScalaName ScalaType
   deriving ( Show )
-  
-type SeArgument = SeElem
 
-{- Represent Scala language extracted from Agda compiler representation -}
+{- Represent Scala language extracted from internal Agda compiler representation -}
 data ScalaExpr
   = SePackage ScalaName [ScalaExpr]
-  | SeAdt ScalaName [ScalaName]
-  | SeFun ScalaName [SeArgument] ScalaType FunBody
+  | SeSum ScalaName [ScalaName]
+  | SeFun ScalaName [SeVar] ScalaType FunBody
+  | SeProd ScalaName [SeVar]
   | Unhandled ScalaName String
   deriving ( Show )
 

@@ -1,13 +1,13 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
   , printCaseObject
   , printSealedTrait
   , printPackage
+  , printCaseClass
   , combineLines
   ) where
 
-import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeElem(..), SeArgument )
+import Data.List ( intercalate )
+import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 
 printScalaExpr :: ScalaExpr -> String
 printScalaExpr def = case def of
@@ -18,23 +18,33 @@ printScalaExpr def = case def of
       <> combineLines (map printScalaExpr defs)
       )
       <> blankLine -- EOF
-  (SeAdt adtName adtCases) ->
+  (SeSum adtName adtCases) ->
     (printSealedTrait adtName)
     <> defsSeparator
     <> combineLines (map (printCaseObject adtName) adtCases)
     <> defsSeparator
   (SeFun fName args resType funBody) ->
     "def" <> exprSeparator <> fName
-    <> "(" <> combineLines (map printFunArg args) <> ")"
+    <> "(" <> combineLines (map printVar args) <> ")"
     <> ":" <> exprSeparator <> resType <> exprSeparator
     <> "=" <> exprSeparator <> funBody
     <> defsSeparator
+  (SeProd name args) -> printCaseClass name args
   (Unhandled "" payload) -> ""
   (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
   other -> "unsupported printScalaExpr " ++ (show other)
 
-printFunArg :: SeArgument -> String
-printFunArg (SeElem sName sType) = sName <> ":" <> exprSeparator <> sType
+printCaseClass :: ScalaName -> [SeVar] -> String
+printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> (printExpr args) <> ")"
+
+printVar :: SeVar -> String
+printVar (SeVar sName sType) = sName <> ":" <> exprSeparator <> sType
+
+printExpr :: [SeVar] -> String
+printExpr names = combineThem (map printVar names)
+
+combineThem :: [String] -> String
+combineThem xs = intercalate ", " xs
 
 printSealedTrait :: ScalaName -> String
 printSealedTrait adtName = "sealed trait" <> exprSeparator <> adtName

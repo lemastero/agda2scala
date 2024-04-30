@@ -1,6 +1,7 @@
 module examples.adts where
 
--- simple sum type no arguments - sealed trait + case objects
+-- simple product type no arguments - sealed trait + case objects
+
 data Rgb : Set where
   Red : Rgb
   Green : Rgb
@@ -17,3 +18,12 @@ data Bool : Set where
 idRgb : Rgb -> Rgb
 idRgb x = x
 {-# COMPILE AGDA2SCALA idRgb #-}
+
+-- simple sum type - case class
+
+record RgbPair : Set where
+  constructor mkRgbPair
+  field
+    fst : Rgb
+    snd : Bool
+{-# COMPILE AGDA2SCALA RgbPair #-}
