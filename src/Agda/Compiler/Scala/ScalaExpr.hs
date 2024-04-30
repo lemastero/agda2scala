@@ -1,4 +1,4 @@
-module Agda.Compiler.Scala.Expr (
+module Agda.Compiler.Scala.ScalaExpr (
  ScalaName,
  ScalaExpr(..),
  unHandled
