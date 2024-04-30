@@ -20,7 +20,7 @@ cabal build all
 
 ```sh
 cabal run -- agda2scala --help
-cabal run -- agda2scala ./test/adts.agda
+cabal run -- agda2scala ./examples/adts.agda
 ```
 
 * Run tests
