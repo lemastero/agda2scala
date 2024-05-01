@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Agda.Compiler.Scala.Backend ( scalaBackend' )
+import Agda.Compiler.Scala.Backend ( scalaBackend', defaultOptions )
 import Test.HUnit (
   Test(..)
   , assertEqual
@@ -11,7 +11,7 @@ import Agda.Compiler.Backend ( isEnabled )
 
 testIsEnabled :: Test
 testIsEnabled = TestCase
-  (assertEqual "isEnabled" (isEnabled scalaBackend' ()) True)
+  (assertEqual "isEnabled" (isEnabled scalaBackend' defaultOptions) True)
 
 tests :: Test
 tests = TestList [TestLabel "scalaBackend" testIsEnabled]

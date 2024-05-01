@@ -4,10 +4,10 @@
 
 ## Working with source code
 
-* Update cabal libraries definitions
+* Starting continuous compilation loop
 
 ```sh
-cabal update
+ghcid
 ```
 
 * Build
@@ -20,7 +20,7 @@ cabal build all
 
 ```sh
 cabal run -- agda2scala --help
-cabal run -- agda2scala ./test/Hello.agda
+cabal run -- agda2scala ./test/adts.agda
 ```
 
 * Run tests
