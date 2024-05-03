@@ -130,14 +130,16 @@ scalaPostModule :: ScalaEnv
   -> TCM ScalaModule
 scalaPostModule env modEnv isMain mName cdefs = do
   outDir <- compileDir
-  compileLog $ "compiling " <> (outFile outDir)
-  unless (all unHandled cdefs) $ liftIO
-    $ writeFile (outFile outDir)
-    $ printScalaExpr (compileModule mName cdefs)
+  compileLog $ "compiling " <> mkOutFile outDir
+  unless (all unHandled cdefs)
+    $ liftIO
+    $ writeFile (mkOutFile outDir) fileContent
   where
     fileName = scalaFileName mName
     dirName outDir = fromMaybe outDir (optOutDir env)
-    outFile outDir = (dirName outDir) <> "/" <> fileName
+    mkOutFile outDir = (dirName outDir) <> "/" <> fileName
+    scalaExprs = compileModule mName cdefs
+    fileContent = printScalaExpr scalaExprs
 
 scalaFileName :: TopLevelModuleName -> FilePath
 scalaFileName mName = moduleNameToFileName mName "scala"

@@ -1,7 +1,10 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
   , printCaseObject
   , printSealedTrait
   , printPackage
+  , combineLines
   ) where
 
 import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..) )
@@ -9,14 +12,14 @@ import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..) )
 printScalaExpr :: ScalaExpr -> String
 printScalaExpr def = case def of
   (SePackage pName defs) ->
-    printPackage pName <> defsSeparator
+    (printPackage pName) <> defsSeparator
     <> (
       blankLine -- between package declaration and first definition
       <> combineLines (map printScalaExpr defs)
       )
-    <> defsSeparator
+      <> blankLine -- EOF
   (SeAdt adtName adtCases) ->
-    printSealedTrait adtName
+    (printSealedTrait adtName)
     <> defsSeparator
     <> unlines (map (printCaseObject adtName) adtCases)
   (Unhandled name payload) -> "" -- for development comment out this and uncomment below
@@ -45,5 +48,8 @@ blankLine = "\n"
 exprSeparator :: String
 exprSeparator = " "
 
+strip :: String -> String
+strip xs = (reverse $ dropWhile (== '\n') (reverse xs)) 
+
 combineLines :: [String] -> String
-combineLines xs = unlines (filter (not . null) xs)
+combineLines xs = strip $ unlines (filter (not . null) xs)
