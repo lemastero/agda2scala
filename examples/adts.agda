@@ -1,4 +1,4 @@
-module test.adts where
+module examples.adts where
 
 -- simple sum type no arguments - sealed trait + case objects
 data Rgb : Set where
@@ -7,7 +7,7 @@ data Rgb : Set where
   Blue : Rgb
 {-# COMPILE AGDA2SCALA Rgb #-}
 
--- TODO simple sum type with arguments
+-- simple sum type with arguments - sealed trait + case class
 
 data Color : Set where
   Light : Rgb -> Color
