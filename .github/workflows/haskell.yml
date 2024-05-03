@@ -51,6 +51,16 @@ jobs:
 
       - name: Run tests
         run: cabal test all
-      
+
+      # compile example Agda files into Scala
       - name: Run tests
         run: cabal run -- agda2scala ./test/adts.agda
+
+      # compile result Scala code
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '21'
+
+      - name: Run tests
+        run: sbt clean compile
