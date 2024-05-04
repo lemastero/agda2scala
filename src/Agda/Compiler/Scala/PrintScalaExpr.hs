@@ -1,30 +1,50 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
   , printCaseObject
   , printSealedTrait
   , printPackage
+  , printCaseClass
   , combineLines
   ) where
 
-import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..) )
+import Data.List ( intercalate )
+import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 
 printScalaExpr :: ScalaExpr -> String
 printScalaExpr def = case def of
   (SePackage pName defs) ->
-    (printPackage pName) <> defsSeparator
-    <> (
+    (printPackage pName) <> exprSeparator -- TODO this should be package + object
+      <> bracket (
       blankLine -- between package declaration and first definition
       <> combineLines (map printScalaExpr defs)
       )
       <> blankLine -- EOF
-  (SeAdt adtName adtCases) ->
+  (SeSum adtName adtCases) ->
     (printSealedTrait adtName)
     <> defsSeparator
-    <> unlines (map (printCaseObject adtName) adtCases)
-  (Unhandled name payload) -> "" -- for development comment out this and uncomment below
-  -- (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
-  -- other -> "unsupported printScalaExpr " ++ (show other)
+    <> combineLines (map (printCaseObject adtName) adtCases)
+    <> defsSeparator
+  (SeFun fName args resType funBody) ->
+    "def" <> exprSeparator <> fName
+    <> "(" <> combineLines (map printVar args) <> ")"
+    <> ":" <> exprSeparator <> resType <> exprSeparator
+    <> "=" <> exprSeparator <> funBody
+    <> defsSeparator
+  (SeProd name args) -> printCaseClass name args
+  (Unhandled "" payload) -> ""
+  (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
+  other -> "unsupported printScalaExpr " ++ (show other)
+
+printCaseClass :: ScalaName -> [SeVar] -> String
+printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> (printExpr args) <> ")"
+
+printVar :: SeVar -> String
+printVar (SeVar sName sType) = sName <> ":" <> exprSeparator <> sType
+
+printExpr :: [SeVar] -> String
+printExpr names = combineThem (map printVar names)
+
+combineThem :: [String] -> String
+combineThem xs = intercalate ", " xs
 
 printSealedTrait :: ScalaName -> String
 printSealedTrait adtName = "sealed trait" <> exprSeparator <> adtName
@@ -34,7 +54,7 @@ printCaseObject superName caseName =
   "case object" <> exprSeparator <> caseName <> exprSeparator <> "extends" <> exprSeparator <> superName
 
 printPackage :: ScalaName -> String
-printPackage pName = "package" <> exprSeparator <> pName
+printPackage pName = "object" <> exprSeparator <> pName
 
 bracket :: String -> String
 bracket str = "{\n" <> str <> "\n}"

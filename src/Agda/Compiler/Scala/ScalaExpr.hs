@@ -1,15 +1,25 @@
 module Agda.Compiler.Scala.ScalaExpr (
  ScalaName,
+ ScalaType,
  ScalaExpr(..),
+ SeVar(..),
+ FunBody,
  unHandled
  ) where
 
 type ScalaName = String
+type FunBody   = String     -- this should be some lambda expression
+type ScalaType = String
 
-{- Represent Scala language extracted from Agda compiler representation -}
+data SeVar = SeVar ScalaName ScalaType
+  deriving ( Show )
+
+{- Represent Scala language extracted from internal Agda compiler representation -}
 data ScalaExpr
   = SePackage ScalaName [ScalaExpr]
-  | SeAdt ScalaName [ScalaName]
+  | SeSum ScalaName [ScalaName]
+  | SeFun ScalaName [SeVar] ScalaType FunBody
+  | SeProd ScalaName [SeVar]
   | Unhandled ScalaName String
   deriving ( Show )
 

@@ -1,15 +1,29 @@
 module examples.adts where
 
--- simple sum type no arguments - sealed trait + case objects
+-- simple product type no arguments - sealed trait + case objects
+
 data Rgb : Set where
   Red : Rgb
   Green : Rgb
   Blue : Rgb
 {-# COMPILE AGDA2SCALA Rgb #-}
 
--- simple sum type with arguments - sealed trait + case class
+data Bool : Set where
+   True : Bool
+   False : Bool
+{-# COMPILE AGDA2SCALA Bool #-}
 
-data Color : Set where
-  Light : Rgb -> Color
-  Dark : Rgb -> Color
-{-# COMPILE AGDA2SCALA Color #-}
+-- trivial function with single argument
+
+idRgb : Rgb -> Rgb
+idRgb x = x
+{-# COMPILE AGDA2SCALA idRgb #-}
+
+-- simple sum type - case class
+
+record RgbPair : Set where
+  constructor mkRgbPair
+  field
+    fst : Rgb
+    snd : Bool
+{-# COMPILE AGDA2SCALA RgbPair #-}
