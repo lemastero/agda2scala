@@ -2,6 +2,10 @@
 
 # agda2scala
 
+
+## Examples
+are in [./examples](examples)
+
 ## Working with source code
 
 * Starting continuous compilation loop
