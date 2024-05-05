@@ -23,11 +23,11 @@ testPrintSealedTrait = TestCase
     "sealed trait Color"
     (printSealedTrait "Color"))
 
---testPrintPackage :: Test
---testPrintPackage = TestCase
---  (assertEqual "printPackage"
---    "package adts"
---    (printPackage "adts"))
+testPrintPackage :: Test
+testPrintPackage = TestCase
+  (assertEqual "printPackage"
+    "object adts"
+    (printPackage "adts"))
 
 testCombineLines :: Test
 testCombineLines = TestCase
@@ -57,7 +57,7 @@ printScalaTests :: Test
 printScalaTests = TestList [
   TestLabel "printCaseObject" testPrintCaseObject
   , TestLabel "printSealedTrait" testPrintSealedTrait
---  , TestLabel "printPackage" testPrintPackage
+  , TestLabel "printPackage" testPrintPackage
   , TestLabel "combineLines" testCombineLines
   , TestLabel "printCaseClass" testPrintCaseClass
   , TestLabel "printScalaExpr" testPrintScalaExpr
