@@ -25,11 +25,11 @@ printScalaExpr def = case def of
     <> defsSeparator
   (SeFun fName args resType funBody) ->
     "def" <> exprSeparator <> fName
-    <> "(" <> combineLines (map printVar args) <> ")"
+    <> "(" <> combineThem (map printVar args) <> ")"
     <> ":" <> exprSeparator <> resType <> exprSeparator
     <> "=" <> exprSeparator <> funBody
     <> defsSeparator
-  (SeProd name args) -> printCaseClass name args
+  (SeProd name args) -> printCaseClass name args <> defsSeparator
   (Unhandled "" payload) -> ""
   (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
   other -> "unsupported printScalaExpr " ++ (show other)
