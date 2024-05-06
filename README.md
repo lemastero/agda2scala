@@ -20,11 +20,29 @@ ghcid
 cabal build all
 ```
 
-* Run
+* Simple way to run Scala backend
 
 ```sh
 cabal run -- agda2scala --help
 cabal run -- agda2scala ./examples/adts.agda
+```
+
+* Generate Scala2 output
+
+```sh
+cabal run -- agda2scala --compile --no-main --out-dir=scala2/src/main/scala ./examples/adts.agda
+```
+
+* Generate Scala3 (dotty) output
+
+```sh
+cabal run -- agda2scala --compile --no-main --scala-dialect=Scala3 --out-dir=scala3/src/main/scala ./examples/adts.agda
+```
+
+```sh
+cabal run -- agda2scala --help
+cabal run -- agda2scala ./examples/adts.agda
+cabal run -- agda2scala --compile --no-main --out-dir=scala2/src/main/scala ./examples/adts.agda
 ```
 
 * Run tests
