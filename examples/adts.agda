@@ -42,6 +42,6 @@ rgbConstTrue1 rgb = True -- TODO produce function body
 
 -- function with multiple named arguments
 
-and0 : (rgbPairArg : RgbPair) -> (rgbArg : Rgb) -> RgbPair
-and0 rgbPairArg rgbArg = rgbPairArg
-{-# COMPILE AGDA2SCALA and0 #-}
+constRgbPair : (rgbPairArg : RgbPair) -> (rgbArg : Rgb) -> RgbPair
+constRgbPair rgbPairArg rgbArg = rgbPairArg
+{-# COMPILE AGDA2SCALA constRgbPair #-}
