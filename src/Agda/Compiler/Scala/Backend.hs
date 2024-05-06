@@ -38,7 +38,8 @@ import Agda.TypeChecking.Monad
 
 import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), unHandled )
 import Agda.Compiler.Scala.AgdaToScalaExpr ( compileDefn )
-import Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr )
+import Agda.Compiler.Scala.PrintScala2 ( printScala2 )
+import Agda.Compiler.Scala.PrintScala3 ( printScala3 )
 
 runScalaBackend :: IO ()
 runScalaBackend = runAgda [scalaBackend]
@@ -46,7 +47,10 @@ runScalaBackend = runAgda [scalaBackend]
 scalaBackend :: Backend
 scalaBackend = Backend scalaBackend'
 
-data Options = Options { optOutDir :: Maybe FilePath }
+data Options = Options {
+  optOutDir :: Maybe FilePath,
+  scalaDialect :: Maybe String
+} deriving (Show)
 
 instance NFData Options where
   rnf _ = ()
@@ -78,19 +82,26 @@ scalaBackendVersion :: Maybe String
 scalaBackendVersion = Just (showVersion version)
 
 defaultOptions :: ScalaFlags
-defaultOptions = Options{ optOutDir = Nothing }
+defaultOptions = Options{ optOutDir = Nothing, scalaDialect = Nothing }
 
 -- TODO add option to choose Scala version (Scala 2.12 vs dotty vs Scala 4)
 -- TODO perhaps add option to choose if we want to produce Functor, Monad etc from zio/zio-prelude or typelevel/cats-effect
 -- TODO perhaps add option to use annotations from siddhartha-gadgil/ProvingGround library
 scalaCmdLineFlags :: [OptDescr (Flag ScalaFlags)]
 scalaCmdLineFlags = [
-  Option ['o'] ["out-dir"] (ReqArg outDirOpt "DIR")
-         "Write output files to DIR. (default: project root)"
+  Option
+    ['o'] ["out-dir"] (ReqArg outDirOpt "DIR")
+    "Write output files to DIR. (default: project root)",
+  Option
+    ['b'] ["scala-dialect"] (ReqArg scalaDialectOpt "scalaDialect")
+    "Write output files using Scala2 or Scala3 dialect. (default: Scala2)"
   ]
 
 outDirOpt :: Monad m => FilePath -> Options -> m Options
 outDirOpt dir opts = return opts{ optOutDir = Just dir }
+
+scalaDialectOpt :: Monad m => String -> Options -> m Options
+scalaDialectOpt sVer opts = return opts{ scalaDialect = Just sVer }
 
 scalaCompileDef :: ScalaEnv
   -> ScalaModuleEnv
@@ -139,7 +150,11 @@ scalaPostModule env modEnv isMain mName cdefs = do
     dirName outDir = fromMaybe outDir (optOutDir env)
     mkOutFile outDir = (dirName outDir) <> "/" <> fileName
     scalaExprs = compileModule mName cdefs
-    fileContent = printScalaExpr scalaExprs
+    fileContent = printer scalaExprs
+    printer = case (scalaDialect env) of
+     (Just "Scala3") -> printScala3
+     (Just "scala2") -> printScala2 
+     Nothing         -> printScala2
 
 scalaFileName :: TopLevelModuleName -> FilePath
 scalaFileName mName = moduleNameToFileName mName "scala"

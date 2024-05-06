@@ -1,4 +1,4 @@
-module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
+module Agda.Compiler.Scala.PrintScala3 ( printScala3
   , printCaseObject
   , printSealedTrait
   , printPackage
@@ -9,13 +9,13 @@ module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
 import Data.List ( intercalate )
 import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 
-printScalaExpr :: ScalaExpr -> String
-printScalaExpr def = case def of
+printScala3 :: ScalaExpr -> String
+printScala3 def = case def of
   (SePackage pName defs) ->
     (printPackage pName) <> exprSeparator -- TODO this should be package + object
       <> bracket (
       blankLine -- between package declaration and first definition
-      <> combineLines (map printScalaExpr defs)
+      <> combineLines (map printScala3 defs)
       )
       <> blankLine -- EOF
   (SeSum adtName adtCases) ->
@@ -32,7 +32,7 @@ printScalaExpr def = case def of
   (SeProd name args) -> printCaseClass name args <> defsSeparator
   (Unhandled "" payload) -> ""
   (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
-  other -> "unsupported printScalaExpr " ++ (show other)
+  other -> "unsupported printScala3 " ++ (show other)
 
 printCaseClass :: ScalaName -> [SeVar] -> String
 printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> (printExpr args) <> ")"

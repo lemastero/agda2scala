@@ -30,7 +30,8 @@ library
   exposed-modules:     Agda.Compiler.Scala.Backend
                        Agda.Compiler.Scala.ScalaExpr
                        Agda.Compiler.Scala.AgdaToScalaExpr
-                       Agda.Compiler.Scala.PrintScalaExpr
+                       Agda.Compiler.Scala.PrintScala2
+                       Agda.Compiler.Scala.PrintScala3
                        Paths_agda2scala
   autogen-modules:     Paths_agda2scala
   build-depends:       base >= 4.10 && < 4.20,

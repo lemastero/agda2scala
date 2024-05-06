@@ -7,11 +7,16 @@ import Test.HUnit (
   )
 import System.Exit ( exitFailure , exitSuccess )
 
-import PrintScalaExprTest ( printScalaTests )
+import PrintScala2Test ( printScala2Tests )
+import PrintScala3Test ( printScala3Tests )
 import ScalaBackendTest ( backendTests )
 
 allTests :: Test
-allTests = TestList [ backendTests , printScalaTests ]
+allTests = TestList [
+  backendTests
+  , printScala2Tests
+  , printScala3Tests
+  ]
 
 main :: IO ()
 main = do

@@ -1,8 +1,8 @@
-module PrintScalaExprTest ( printScalaTests ) where
+module PrintScala3Test ( printScala3Tests ) where
 
 import Test.HUnit ( Test(..), assertEqual )
-import Agda.Compiler.Scala.PrintScalaExpr (
-  printScalaExpr
+import Agda.Compiler.Scala.PrintScala3 (
+  printScala3
   , printSealedTrait
   , printCaseObject
   , printPackage
@@ -35,9 +35,9 @@ testCombineLines = TestCase
     "a\nb"
     (combineLines ["", "a", "", "", "b", "", "", ""]))
 
-testPrintScalaExpr :: Test
-testPrintScalaExpr = TestCase
-  (assertEqual "printScalaExpr" (printScalaExpr $ SePackage "adts" moduleContent)
+testPrintScala3 :: Test
+testPrintScala3 = TestCase
+  (assertEqual "printScala3" (printScala3 $ SePackage "adts" moduleContent)
   "object adts {\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n}\n"
   )
   where
@@ -53,12 +53,12 @@ testPrintCaseClass = TestCase
     (printCaseClass "RgbPair" [SeVar "snd" "Bool", SeVar "fst" "Rgb"]))
     
 
-printScalaTests :: Test
-printScalaTests = TestList [
+printScala3Tests :: Test
+printScala3Tests = TestList [
   TestLabel "printCaseObject" testPrintCaseObject
   , TestLabel "printSealedTrait" testPrintSealedTrait
   , TestLabel "printPackage" testPrintPackage
   , TestLabel "combineLines" testCombineLines
   , TestLabel "printCaseClass" testPrintCaseClass
-  , TestLabel "printScalaExpr" testPrintScalaExpr
+  , TestLabel "printScala3" testPrintScala3
   ]
