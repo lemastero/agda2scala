@@ -18,17 +18,9 @@ import System.Console.GetOpt ( OptDescr(Option), ArgDescr(ReqArg) )
 import Paths_agda2scala ( version )
 
 import Agda.Main ( runAgda )
-import Agda.Compiler.Backend (
-  Backend(..)
-  , Backend'(..)
-  , Definition
-  , Flag
-  , IsMain
-  , Recompile(..)
-  , TCM )
+import Agda.Compiler.Backend
 import Agda.Interaction.Options ( OptDescr )
 import Agda.Compiler.Common ( curIF, compileDir )
-import Agda.Compiler.Backend ( IsMain )
 import Agda.Syntax.Abstract.Name ( QName )
 import Agda.Syntax.Common.Pretty ( prettyShow )
 import Agda.Syntax.Common ( moduleNameParts )

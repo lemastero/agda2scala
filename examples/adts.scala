@@ -13,5 +13,5 @@ final case class RgbPair(snd: Bool, fst: Rgb)
 
 def idRgb(theArg: Rgb): Rgb = theArg
 
-def and0(rgbArg: Rgb, rgbPairArg: RgbPair): RgbPair = rgbPairArg
+def constRgbPair(rgbArg: Rgb, rgbPairArg: RgbPair): RgbPair = rgbPairArg
 }
