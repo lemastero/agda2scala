@@ -1,3 +1,5 @@
+package examples
+
 object adts {
 
 sealed trait Rgb
