@@ -52,8 +52,11 @@ jobs:
       - name: Run Haskell tests
         run: cabal test all
 
-      - name: Compile example Agda code to Scala
-        run: cabal run -- agda2scala ./examples/adts.agda
+      - name: Compile example Agda code to Scala 2
+        run: cabal run -- agda2scala --out-dir=scala2/src/main/scala ./examples/adts.agda
+
+      - name: Compile example Agda code to Scala 3
+        run: cabal run -- agda2scala --scala-dialect=Scala3 --out-dir=scala3/src/main/scala ./examples/adts.agda
 
       - name: Set up JVM including SBT
         uses: actions/setup-java@v4
@@ -61,5 +64,8 @@ jobs:
           distribution: 'adopt'
           java-version: '21'
 
-      - name: compile result Scala code
-        run: cd examples && sbt clean compile
+      - name: compile result Scala 2 code
+        run: cd scala2 && sbt clean compile
+
+      - name: compile result Scala 3 code
+        run: cd scala3ľ && sbt clean compile
