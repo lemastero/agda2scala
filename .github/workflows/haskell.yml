@@ -65,7 +65,7 @@ jobs:
           java-version: '21'
 
       - name: compile result Scala 2 code
-        run: cd scala2 && sbt clean compile
+        run: cd scala2 && sbt clean test
 
       - name: compile result Scala 3 code
-        run: cd scala3 && sbt clean compile
+        run: cd scala3 && sbt clean test
