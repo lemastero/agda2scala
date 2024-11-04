@@ -12,7 +12,7 @@ import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 printScala3 :: ScalaExpr -> String
 printScala3 def = case def of
   (SePackage pNames defs) ->
-    (printPackageAndObject pNames)
+    printPackageAndObject pNames
       <> bracket (map printScala3 defs)
       <> blankLine -- EOF
   (SeSum adtName adtCases) ->
@@ -28,11 +28,11 @@ printScala3 def = case def of
     <> defsSeparator
   (SeProd name args) -> printCaseClass name args <> defsSeparator
   (Unhandled "" payload) -> ""
-  (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
-  other -> "unsupported printScala3 " ++ (show other)
+  (Unhandled name payload) -> "TODO " ++ show name ++ " " ++ show payload
+  other -> "unsupported printScala3 " ++ show other
 
 printCaseClass :: ScalaName -> [SeVar] -> String
-printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> (printExpr args) <> ")"
+printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> printExpr args <> ")"
 
 printVar :: SeVar -> String
 printVar (SeVar sName sType) = sName <> ":" <> exprSeparator <> sType
@@ -41,7 +41,7 @@ printExpr :: [SeVar] -> String
 printExpr names = combineThem (map printVar names)
 
 combineThem :: [String] -> String
-combineThem xs = intercalate ", " xs
+combineThem = intercalate ", "
 
 printSealedTrait :: ScalaName -> String
 printSealedTrait adtName = "sealed trait" <> exprSeparator <> adtName
@@ -52,14 +52,14 @@ printCaseObject superName caseName =
 
 printPackageAndObject :: [ScalaName] -> String
 printPackageAndObject [] = ""
-printPackageAndObject (oname:[]) = printObject oname
+printPackageAndObject [oname] = printObject oname
 printPackageAndObject pName = printPackage (init pName)
   <> defsSeparator <> defsSeparator
-  <> (printObject (last pName))
-  
+  <> printObject (last pName)
+
 printPackage :: [ScalaName] -> String
 printPackage [] = ""
-printPackage pNames = "package" <> exprSeparator <> (intercalate "." pNames)
+printPackage pNames = "package" <> exprSeparator <> intercalate "." pNames
 
 printObject :: ScalaName -> String
 printObject pName = "object" <> exprSeparator <> pName
@@ -81,10 +81,10 @@ indent :: String
 indent = "  "
 
 strip :: String -> String
-strip xs = (reverse $ dropWhile (== '\n') (reverse xs)) 
+strip xs = reverse $ dropWhile (== '\n') (reverse xs)
 
 combineLines :: [String] -> String
 combineLines xs = strip $ unlines (filter (not . null) xs)
 
 combineLinesWithIndent :: String -> [String] -> String
-combineLinesWithIndent indent xs = strip $ unlines (fmap (\x -> indent ++ x) (filter (not . null) xs))
+combineLinesWithIndent indent xs = strip $ unlines (fmap (indent ++) (filter (not . null) xs))
