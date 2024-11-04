@@ -16,7 +16,7 @@ testPrintCaseObject = TestCase
   (assertEqual "printCaseObject"
     "case object Light extends Color"
     (printCaseObject "Color" "Light"))
-  
+
 testPrintSealedTrait :: Test
 testPrintSealedTrait = TestCase
   (assertEqual "printSealedTrait"
@@ -38,7 +38,7 @@ testCombineLines = TestCase
 testPrintScala3 :: Test
 testPrintScala3 = TestCase
   (assertEqual "printScala3"
-    "object adts:\n  sealed trait Rgb\n  case object Red extends Rgb\n  case object Green extends Rgb\n  case object Blue extends Rgb\n\n  sealed trait Color\n  case object Light extends Color\n  case object Dark extends Color\n"
+    "object adts:\n  enum Rgb:\n    case Red\n    case Green\n    case Blue\n\n  enum Color:\n    case Light\n    case Dark\n"
     (printScala3 $ SePackage ["adts"] moduleContent)
   )
   where
@@ -52,7 +52,7 @@ testPrintCaseClass = TestCase
   (assertEqual "printCaseClass"
     "final case class RgbPair(snd: Bool, fst: Rgb)"
     (printCaseClass "RgbPair" [SeVar "snd" "Bool", SeVar "fst" "Rgb"]))
-    
+
 
 printScala3Tests :: Test
 printScala3Tests = TestList [

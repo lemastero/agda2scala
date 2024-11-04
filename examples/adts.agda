@@ -31,7 +31,7 @@ record RgbPair : Set where
 -- trivial function with single argument
 
 idRgb : Rgb -> Rgb
-idRgb theArg = theArg 
+idRgb theArg = theArg
 {-# COMPILE AGDA2SCALA idRgb #-}
 
 -- const function with one named argument
