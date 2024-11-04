@@ -35,7 +35,7 @@ printCaseClass :: ScalaName -> [SeVar] -> String
 printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> printExpr args <> ")"
 
 printVar :: SeVar -> String
-printVar (SeVar sName sType) = sName <> ":" <> exprSeparator <> sType
+printVar (SeVar sName sType) = sName <> colonSeparator <> exprSeparator <> sType
 
 printExpr :: [SeVar] -> String
 printExpr names = combineThem (map printVar names)
@@ -65,7 +65,8 @@ printObject :: ScalaName -> String
 printObject pName = "object" <> exprSeparator <> pName
 
 bracket :: [String] -> String
-bracket str = ":" <> defsSeparator <> (combineLinesWithIndent indent str)
+bracket str = colonSeparator <> defsSeparator <> combineLinesWithIndent indent str
+
 -- -- TODO Scala3 indents
 
 defsSeparator :: String
@@ -76,6 +77,9 @@ blankLine = "\n"
 
 exprSeparator :: String
 exprSeparator = " "
+
+colonSeparator :: String
+colonSeparator = ":"
 
 indent :: String
 indent = "  "
