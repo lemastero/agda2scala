@@ -64,8 +64,10 @@ jobs:
           distribution: 'adopt'
           java-version: '21'
 
-      - name: compile result Scala 2 code
-        run: cd scala2 && sbt clean test
+      - name: compile & test result Scala 2 code
+        run: sbt clean test
+        working-directory: ./scala2
 
-      - name: compile result Scala 3 code
-        run: cd scala3 && sbt clean test
+      - name: compile & test result Scala 3 code
+        run: sbt clean test
+        working-directory: ./scala3
