@@ -23,7 +23,7 @@ jobs:
         # The last step generates dist-newstyle/cache/plan.json for the cache key.
 
       - name: Restore cached dependencies
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         id: cache
         env:
           key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
@@ -39,7 +39,7 @@ jobs:
 
       # Cache dependencies already here, so that we do not have to rebuild them should the subsequent steps fail.
       - name: Save cached dependencies
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         # If we had an exact cache hit, trying to save the cache would error because of key clash.
         if: ${{ steps.cache.outputs.cache-hit != 'true' }}
         with:
@@ -52,8 +52,11 @@ jobs:
       - name: Run Haskell tests
         run: cabal test all
 
-      - name: Compile example Agda code to Scala
-        run: cabal run -- agda2scala ./examples/adts.agda
+      - name: Compile example Agda code to Scala 2
+        run: cabal run -- agda2scala --out-dir=scala2/src/main/scala ./examples/adts.agda
+
+      - name: Compile example Agda code to Scala 3
+        run: cabal run -- agda2scala --scala-dialect=Scala3 --out-dir=scala3/src/main/scala ./examples/adts.agda
 
       - name: Set up JVM including SBT
         uses: actions/setup-java@v4
@@ -61,5 +64,10 @@ jobs:
           distribution: 'adopt'
           java-version: '21'
 
-      - name: compile result Scala code
-        run: cd examples && sbt clean compile
+      - name: compile & test result Scala 2 code
+        run: sbt clean test
+        working-directory: ./scala2
+
+      - name: compile & test result Scala 3 code
+        run: sbt clean test
+        working-directory: ./scala3

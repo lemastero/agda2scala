@@ -16,7 +16,7 @@ data SeVar = SeVar ScalaName ScalaType
 
 {- Represent Scala language extracted from internal Agda compiler representation -}
 data ScalaExpr
-  = SePackage ScalaName [ScalaExpr]
+  = SePackage [ScalaName] [ScalaExpr]
   | SeSum ScalaName [ScalaName]
   | SeFun ScalaName [SeVar] ScalaType FunBody
   | SeProd ScalaName [SeVar]

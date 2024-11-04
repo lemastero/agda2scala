@@ -1,7 +1,7 @@
-module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
+module Agda.Compiler.Scala.PrintScala2 ( printScala2
   , printCaseObject
   , printSealedTrait
-  , printPackage
+  , printPackageAndObject
   , printCaseClass
   , combineLines
   ) where
@@ -9,13 +9,13 @@ module Agda.Compiler.Scala.PrintScalaExpr ( printScalaExpr
 import Data.List ( intercalate )
 import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 
-printScalaExpr :: ScalaExpr -> String
-printScalaExpr def = case def of
-  (SePackage pName defs) ->
-    (printPackage pName) <> exprSeparator -- TODO this should be package + object
+printScala2 :: ScalaExpr -> String
+printScala2 def = case def of
+  (SePackage pNames defs) ->
+    (printPackageAndObject pNames) <> exprSeparator
       <> bracket (
       blankLine -- between package declaration and first definition
-      <> combineLines (map printScalaExpr defs)
+      <> combineLines (map printScala2 defs)
       )
       <> blankLine -- EOF
   (SeSum adtName adtCases) ->
@@ -32,7 +32,7 @@ printScalaExpr def = case def of
   (SeProd name args) -> printCaseClass name args <> defsSeparator
   (Unhandled "" payload) -> ""
   (Unhandled name payload) -> "TODO " ++ (show name) ++ " " ++ (show payload)
-  other -> "unsupported printScalaExpr " ++ (show other)
+  other -> "unsupported printScala2 " ++ (show other)
 
 printCaseClass :: ScalaName -> [SeVar] -> String
 printCaseClass name args = "final case class" <> exprSeparator <> name <> "(" <> (printExpr args) <> ")"
@@ -53,8 +53,19 @@ printCaseObject :: ScalaName -> ScalaName -> String
 printCaseObject superName caseName =
   "case object" <> exprSeparator <> caseName <> exprSeparator <> "extends" <> exprSeparator <> superName
 
-printPackage :: ScalaName -> String
-printPackage pName = "object" <> exprSeparator <> pName
+printPackageAndObject :: [ScalaName] -> String
+printPackageAndObject [] = ""
+printPackageAndObject (oname:[]) = printObject oname
+printPackageAndObject pName = printPackage (init pName)
+  <> defsSeparator <> defsSeparator
+  <> (printObject (last pName))
+  
+printPackage :: [ScalaName] -> String
+printPackage [] = ""
+printPackage pName = "package" <> exprSeparator <> (intercalate "." pName)
+
+printObject :: ScalaName -> String
+printObject pName = "object" <> exprSeparator <> pName
 
 bracket :: String -> String
 bracket str = "{\n" <> str <> "\n}"
