@@ -37,8 +37,9 @@ testCombineLines = TestCase
 
 testPrintScala3 :: Test
 testPrintScala3 = TestCase
-  (assertEqual "printScala3" (printScala3 $ SePackage ["adts"] moduleContent)
-  "object adts {\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n}\n"
+  (assertEqual "printScala3"
+    "object adts:\n  sealed trait Rgb\n  case object Red extends Rgb\n  case object Green extends Rgb\n  case object Blue extends Rgb\n\n  sealed trait Color\n  case object Light extends Color\n  case object Dark extends Color\n"
+    (printScala3 $ SePackage ["adts"] moduleContent)
   )
   where
     moduleContent = [rgbAdt, blank, blank, blank, colorAdt, blank, blank]
