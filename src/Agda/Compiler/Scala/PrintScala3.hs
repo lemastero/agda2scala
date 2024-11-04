@@ -1,7 +1,7 @@
 module Agda.Compiler.Scala.PrintScala3 ( printScala3
   , printCaseObject
   , printSealedTrait
-  , printPackage
+  , printPackageAndObject
   , printCaseClass
   , combineLines
   ) where
@@ -11,8 +11,8 @@ import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 
 printScala3 :: ScalaExpr -> String
 printScala3 def = case def of
-  (SePackage pName defs) ->
-    (printPackage pName) <> exprSeparator -- TODO this should be package + object
+  (SePackage pNames defs) ->
+    (printPackageAndObject pNames) <> exprSeparator
       <> bracket (
       blankLine -- between package declaration and first definition
       <> combineLines (map printScala3 defs)
@@ -53,8 +53,19 @@ printCaseObject :: ScalaName -> ScalaName -> String
 printCaseObject superName caseName =
   "case object" <> exprSeparator <> caseName <> exprSeparator <> "extends" <> exprSeparator <> superName
 
-printPackage :: ScalaName -> String
-printPackage pName = "object" <> exprSeparator <> pName
+printPackageAndObject :: [ScalaName] -> String
+printPackageAndObject [] = ""
+printPackageAndObject (oname:[]) = printObject oname
+printPackageAndObject pName = printPackage (init pName)
+  <> defsSeparator <> defsSeparator
+  <> (printObject (last pName))
+  
+printPackage :: [ScalaName] -> String
+printPackage [] = ""
+printPackage pNames = "package" <> exprSeparator <> (intercalate "." pNames)
+
+printObject :: ScalaName -> String
+printObject pName = "object" <> exprSeparator <> pName
 
 bracket :: String -> String
 bracket str = "{\n" <> str <> "\n}"

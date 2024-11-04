@@ -5,7 +5,7 @@ import Agda.Compiler.Scala.PrintScala2 (
   printScala2
   , printSealedTrait
   , printCaseObject
-  , printPackage
+  , printPackageAndObject
   , combineLines
   , printCaseClass
   )
@@ -23,11 +23,23 @@ testPrintSealedTrait = TestCase
     "sealed trait Color"
     (printSealedTrait "Color"))
 
-testPrintPackage :: Test
-testPrintPackage = TestCase
-  (assertEqual "printPackage"
+testObjectWhenNoPackage :: Test
+testObjectWhenNoPackage = TestCase
+  (assertEqual "printPackageAndObject"
     "object adts"
-    (printPackage "adts"))
+    (printPackageAndObject ["adts"]))
+
+testPrintPackageAndObject :: Test
+testPrintPackageAndObject = TestCase
+  (assertEqual "printPackageAndObject"
+    "package example\n\nobject adts"
+    (printPackageAndObject ["example", "adts"]))
+
+testPrintMultiplePartPackageAndObject :: Test
+testPrintMultiplePartPackageAndObject = TestCase
+  (assertEqual "printPackageAndObject"
+    "package org.example\n\nobject adts"
+    (printPackageAndObject ["org", "example", "adts"]))
 
 testCombineLines :: Test
 testCombineLines = TestCase
@@ -37,8 +49,9 @@ testCombineLines = TestCase
 
 testPrintScala2:: Test
 testPrintScala2 = TestCase
-  (assertEqual "printScala2" (printScala2 $ SePackage "adts" moduleContent)
+  (assertEqual "printScala2"
   "object adts {\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n}\n"
+  (printScala2 $ SePackage ["adts"] moduleContent)
   )
   where
     moduleContent = [rgbAdt, blank, blank, blank, colorAdt, blank, blank]
@@ -57,7 +70,9 @@ printScala2Tests :: Test
 printScala2Tests = TestList [
   TestLabel "printCaseObject" testPrintCaseObject
   , TestLabel "printSealedTrait" testPrintSealedTrait
-  , TestLabel "printPackage" testPrintPackage
+  , TestLabel "printObject" testObjectWhenNoPackage
+  , TestLabel "printPackageAndObject" testPrintPackageAndObject
+  , TestLabel "printPackageAndObject 2" testPrintMultiplePartPackageAndObject
   , TestLabel "combineLines" testCombineLines
   , TestLabel "printCaseClass" testPrintCaseClass
   , TestLabel "printScala2" testPrintScala2

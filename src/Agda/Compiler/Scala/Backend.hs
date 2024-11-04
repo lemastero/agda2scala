@@ -11,7 +11,7 @@ import Control.Monad.IO.Class ( MonadIO(liftIO) )
 import qualified Data.List.NonEmpty as Nel
 import Data.Maybe ( fromMaybe )
 import Data.Map ( Map )
-import qualified Data.Text.IO as T
+import qualified Data.Text as T
 import Data.Version ( showVersion )
 import System.Console.GetOpt ( OptDescr(Option), ArgDescr(ReqArg) )
 
@@ -76,7 +76,6 @@ scalaBackendVersion = Just (showVersion version)
 defaultOptions :: ScalaFlags
 defaultOptions = Options{ optOutDir = Nothing, scalaDialect = Nothing }
 
--- TODO add option to choose Scala version (Scala 2.12 vs dotty vs Scala 4)
 -- TODO perhaps add option to choose if we want to produce Functor, Monad etc from zio/zio-prelude or typelevel/cats-effect
 -- TODO perhaps add option to use annotations from siddhartha-gadgil/ProvingGround library
 scalaCmdLineFlags :: [OptDescr (Flag ScalaFlags)]
@@ -155,8 +154,8 @@ compileModule :: TopLevelModuleName -> [ScalaDefinition] -> ScalaDefinition
 compileModule mName cdefs =
   SePackage (moduleName mName) cdefs
 
-moduleName :: TopLevelModuleName -> String
-moduleName n = prettyShow (Nel.last (moduleNameParts n))
+moduleName :: TopLevelModuleName -> [String]
+moduleName n = Nel.toList (fmap T.unpack (moduleNameParts n)) -- (Nel.last (moduleNameParts n))
 
 compileLog :: String -> TCMT IO ()
 compileLog msg = liftIO $ putStrLn msg

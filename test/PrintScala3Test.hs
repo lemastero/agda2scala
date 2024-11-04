@@ -5,7 +5,7 @@ import Agda.Compiler.Scala.PrintScala3 (
   printScala3
   , printSealedTrait
   , printCaseObject
-  , printPackage
+  , printPackageAndObject
   , combineLines
   , printCaseClass
   )
@@ -25,9 +25,9 @@ testPrintSealedTrait = TestCase
 
 testPrintPackage :: Test
 testPrintPackage = TestCase
-  (assertEqual "printPackage"
+  (assertEqual "printPackageAndObject"
     "object adts"
-    (printPackage "adts"))
+    (printPackageAndObject ["adts"]))
 
 testCombineLines :: Test
 testCombineLines = TestCase
@@ -37,7 +37,7 @@ testCombineLines = TestCase
 
 testPrintScala3 :: Test
 testPrintScala3 = TestCase
-  (assertEqual "printScala3" (printScala3 $ SePackage "adts" moduleContent)
+  (assertEqual "printScala3" (printScala3 $ SePackage ["adts"] moduleContent)
   "object adts {\n\nsealed trait Rgb\ncase object Red extends Rgb\ncase object Green extends Rgb\ncase object Blue extends Rgb\n\nsealed trait Color\ncase object Light extends Color\ncase object Dark extends Color\n}\n"
   )
   where
