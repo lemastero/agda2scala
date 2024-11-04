@@ -12,16 +12,13 @@ import Agda.Compiler.Scala.ScalaExpr ( ScalaName, ScalaExpr(..), SeVar(..))
 printScala3 :: ScalaExpr -> String
 printScala3 def = case def of
   (SePackage pNames defs) ->
-    (printPackageAndObject pNames) <> exprSeparator
-      <> bracket (
-      blankLine -- between package declaration and first definition
-      <> combineLines (map printScala3 defs)
-      )
+    (printPackageAndObject pNames)
+      <> bracket (map printScala3 defs)
       <> blankLine -- EOF
   (SeSum adtName adtCases) ->
     (printSealedTrait adtName)
     <> defsSeparator
-    <> combineLines (map (printCaseObject adtName) adtCases)
+    <> combineLinesWithIndent indent (map (printCaseObject adtName) adtCases)
     <> defsSeparator
   (SeFun fName args resType funBody) ->
     "def" <> exprSeparator <> fName
@@ -67,8 +64,9 @@ printPackage pNames = "package" <> exprSeparator <> (intercalate "." pNames)
 printObject :: ScalaName -> String
 printObject pName = "object" <> exprSeparator <> pName
 
-bracket :: String -> String
-bracket str = "{\n" <> str <> "\n}"
+bracket :: [String] -> String
+bracket str = ":" <> defsSeparator <> (combineLinesWithIndent indent str)
+-- -- TODO Scala3 indents
 
 defsSeparator :: String
 defsSeparator = "\n"
@@ -79,8 +77,14 @@ blankLine = "\n"
 exprSeparator :: String
 exprSeparator = " "
 
+indent :: String
+indent = "  "
+
 strip :: String -> String
 strip xs = (reverse $ dropWhile (== '\n') (reverse xs)) 
 
 combineLines :: [String] -> String
 combineLines xs = strip $ unlines (filter (not . null) xs)
+
+combineLinesWithIndent :: String -> [String] -> String
+combineLinesWithIndent indent xs = strip $ unlines (fmap (\x -> indent ++ x) (filter (not . null) xs))
