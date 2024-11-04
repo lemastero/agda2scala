@@ -16,9 +16,8 @@ printScala3 def = case def of
       <> bracket (map printScala3 defs)
       <> blankLine -- EOF
   (SeSum adtName adtCases) ->
-    (printSealedTrait adtName)
-    <> defsSeparator
-    <> combineLinesWithIndent indent (map (printCaseObject adtName) adtCases)
+    printEnum adtName
+    <> bracketWithIndent (map printEnumCase adtCases) 2
     <> defsSeparator
   (SeFun fName args resType funBody) ->
     "def" <> exprSeparator <> fName
@@ -46,9 +45,16 @@ combineThem = intercalate ", "
 printSealedTrait :: ScalaName -> String
 printSealedTrait adtName = "sealed trait" <> exprSeparator <> adtName
 
+printEnum :: ScalaName -> String
+printEnum adtName = "enum" <> exprSeparator <> adtName
+
 printCaseObject :: ScalaName -> ScalaName -> String
 printCaseObject superName caseName =
   "case object" <> exprSeparator <> caseName <> exprSeparator <> "extends" <> exprSeparator <> superName
+
+printEnumCase :: ScalaName -> String
+printEnumCase  caseName =
+  "case" <> exprSeparator <> caseName
 
 printPackageAndObject :: [ScalaName] -> String
 printPackageAndObject [] = ""
@@ -68,6 +74,9 @@ bracket :: [String] -> String
 bracket str = colonSeparator <> defsSeparator <> combineLinesWithIndent indent str
 
 -- -- TODO Scala3 indents
+bracketWithIndent :: [String] -> Int -> String
+bracketWithIndent str i =
+  colonSeparator <> defsSeparator <> combineLinesWithIndent (times i indent) str
 
 defsSeparator :: String
 defsSeparator = "\n"
@@ -83,6 +92,9 @@ colonSeparator = ":"
 
 indent :: String
 indent = "  "
+
+times :: Int -> String -> String
+times i s = intercalate "" (replicate i s)
 
 strip :: String -> String
 strip xs = reverse $ dropWhile (== '\n') (reverse xs)
